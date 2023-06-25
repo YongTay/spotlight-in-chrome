@@ -1,0 +1,13 @@
+packages:
+  # 消息通信
+  - 'events/**'
+  # 脚本
+  - 'scripts/**'
+  # 子项目
+  - 'packages/*'
+  # 组件
+  - 'components/**'
+  # exclude packages that are inside test directories
+  - '!**/test/**'
+
+

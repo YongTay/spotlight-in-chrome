@@ -1,0 +1,37 @@
+{
+  "name": "spotlight-in-chrome",
+  "version": "0.0.1",
+  "description": "在chrome 中快速搜索当前页签，书签以及历史记录",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:popup && npm run build:options && npm run build:webpage && echo '>>>>>> have been finished'",
+    "build:popup": "node scripts/popup.js",
+    "build:options": "node scripts/options.js",
+    "build:webpage": "node scripts/webpage.js"
+  },
+  "keywords": [
+    "spotlight",
+    "chrome"
+  ],
+  "author": "Yongtay",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.238",
+    "@types/node": "^20.3.1",
+    "@types/react": "^18.0.37",
+    "@types/react-dom": "^18.0.11",
+    "@typescript-eslint/eslint-plugin": "^5.59.0",
+    "@typescript-eslint/parser": "^5.59.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "eslint": "^8.38.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.3.4",
+    "typescript": "^5.0.2",
+    "vite": "^4.3.9"
+  }
+}
