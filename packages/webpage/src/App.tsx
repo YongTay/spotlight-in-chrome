@@ -1,35 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {Component} from 'react'
+import { IProps, IState } from '../types.ts'
+import css from './App.module.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+class App extends Component<IProps, IState> {
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+  constructor(props: IProps) {
+    super(props)
+    this.state = {
+      visible: true
+    }
+    window.addEventListener('keyup', this.handleKeyUp)
+  }
+
+  hidePopup = () => {
+    this.setState(() => {
+      return {
+        visible: false
+      }
+    })
+  }
+
+  handleKeyUp = (e: KeyboardEvent) => {
+    if (e.key === 'Escape' || e.keyCode === 27 || e.code === 'Escape') {
+      this.hidePopup()
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keyup', this.handleKeyUp)
+  }
+
+  render() {
+    return (
+      this.state.visible && <div
+        className={css.container}
+      >
+        <div
+          className={css.popup}
+        >
+          <div
+            className={css.searchWrapper}
+          >
+            <input/>
+          </div>
+        </div>
+        <div
+          className={css.mask}
+          onClick={this.hidePopup}
+        ></div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    )
+  }
 }
 
 export default App
