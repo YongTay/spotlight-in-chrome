@@ -1,0 +1,29 @@
+{
+    "name": "spotlight-in-chrome",
+    "version": "0.0.1",
+    "manifest_version": 3,
+    "description": "chrome中的聚焦，快速搜索和管理你的tab,书签和浏览历史",
+    "icons": {
+        "16": "dist/assets/icon16.png",
+        "48": "dist/assets/icon48.png",
+        "128": "dist/assets/icon128.png"
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["packages/webpage/dist/index.js"]
+        }
+    ],
+    "options_page": "packages/options/dist/index.html",
+    "background": {
+        "service_worker": "background.js"
+    },
+    "permissions": [
+        "scripting",
+        "activeTab",
+        "tabs",
+        "storage"
+    ],
+    "host_permissions": ["<all_urls>"],
+    "minimum_chrome_version": "102"
+}
