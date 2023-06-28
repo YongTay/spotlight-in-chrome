@@ -1,5 +1,5 @@
 import {Component} from 'react'
-import { IProps, IState } from '../types.ts'
+import {IProps, IState, Port} from '../types.ts'
 import css from './App.module.css'
 
 class App extends Component<IProps, IState> {
@@ -7,7 +7,8 @@ class App extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props)
     this.state = {
-      visible: true
+      visible: true,
+      port: undefined
     }
     window.addEventListener('keyup', this.handleKeyUp)
   }
@@ -28,6 +29,26 @@ class App extends Component<IProps, IState> {
 
   componentWillUnmount() {
     window.removeEventListener('keyup', this.handleKeyUp)
+  }
+
+  componentDidMount() {
+    const port: Port = chrome.runtime.connect({ name: 'spotlight' })
+    port.postMessage({
+      type: 'register',
+      value: true
+    })
+    port.onMessage.addListener(msg => {
+      console.log(msg)
+      switch (msg.type) {
+        case 'visible':
+          this.setState(() => ({ visible: true }))
+      }
+    })
+    this.setState(() => {
+      return {
+        port: port
+      }
+    })
   }
 
   render() {

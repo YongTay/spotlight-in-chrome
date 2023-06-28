@@ -11,14 +11,9 @@ if(import.meta.env.MODE === 'development') {
 } else {
 
   window.addEventListener('beforeunload', () => {
-
     chrome.runtime?.sendMessage && chrome.runtime.sendMessage({
       reload: true
-    }).then(res => {
-      if(res.finish) {
-        console.log('finish reload')
-      }
-    })
+    }).then(() => {})
   })
   const div: HTMLElement = document.createElement('div')
   div.id = 'spotlight-extensions-root'
