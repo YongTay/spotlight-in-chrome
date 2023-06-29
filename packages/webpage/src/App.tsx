@@ -1,6 +1,7 @@
 import {Component} from 'react'
-import {IProps, IState, Port} from '../types.ts'
+import {IProps, IState, Port, IMessage} from '@/types'
 import css from './App.module.css'
+import SearchInput from '@/components/SearchInput/SearchInput'
 
 class App extends Component<IProps, IState> {
 
@@ -37,7 +38,8 @@ class App extends Component<IProps, IState> {
       type: 'register',
       value: true
     })
-    port.onMessage.addListener(msg => {
+    port.onMessage.addListener((msg: any) => {
+      msg = msg as IMessage
       console.log(msg)
       switch (msg.type) {
         case 'visible':
@@ -59,11 +61,7 @@ class App extends Component<IProps, IState> {
         <div
           className={css.popup}
         >
-          <div
-            className={css.searchWrapper}
-          >
-            <input/>
-          </div>
+          <SearchInput />
         </div>
         <div
           className={css.mask}

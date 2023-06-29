@@ -4,6 +4,9 @@ export interface IProps {}
 export interface IState {
   visible?: boolean,
   port?: chrome.runtime.Port | undefined
+  search?: string
+  inputData?: string,
+  prefix?: string
 }
 
 // 对象的任意类型

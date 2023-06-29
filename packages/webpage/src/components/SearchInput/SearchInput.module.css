@@ -1,0 +1,46 @@
+.search-wrapper {
+  display: flex;
+  position: relative;
+  border: 1px solid #1a1a1a;
+  border-radius: 5px;
+}
+
+.search-wrapper:focus {
+  border: 1px solid #535bf2;
+}
+
+.search-wrapper > input {
+  flex-grow: 1;
+  box-sizing: border-box;
+  height: 40px;
+  padding-left: 10px;
+  outline: none;
+  font-size: 26px;
+  font-family: "Microsoft Sans Serif", serif;
+  color: #1a1a1a;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+.pl {
+  padding-left: 10px;
+}
+
+.pl0 {
+  padding-left: 0!important;
+}
+
+
+.search-engine {
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  padding: 0 5px;
+}
+
+.search-engine > span {
+  background-color: skyblue;
+  padding: 5px;
+  border-radius: 5px;
+}

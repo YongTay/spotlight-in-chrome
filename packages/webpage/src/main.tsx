@@ -20,6 +20,7 @@ if(import.meta.env.MODE === 'development') {
   div.style.position = 'fixed'
   div.style.top = '0'
   div.style.left = '0'
+  div.style.zIndex = '9999'
   window.document.body.appendChild(div)
   ReactDOM.createRoot(document.getElementById('spotlight-extensions-root') as HTMLElement).render(
     <React.StrictMode>
