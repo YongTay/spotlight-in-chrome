@@ -20,7 +20,6 @@
   color: #1a1a1a;
   background-color: transparent;
   border: none;
-  outline: none;
 }
 
 .pl {
@@ -43,4 +42,36 @@
   background-color: skyblue;
   padding: 5px;
   border-radius: 5px;
+}
+
+.suggest-popup {
+  position: absolute;
+  top: 20px;
+  left: 40px;
+  width: 66px;
+  max-height: 88px;
+  overflow-y: scroll;
+  background-color: #87ceeb;
+  color: #ffffff;
+  border-radius: 5px;
+}
+
+.suggest-popup::-webkit-scrollbar {
+  background-color: transparent;
+  width: 1px;
+}
+
+.suggest-popup > p {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  user-select: none;
+}
+
+.suggest-popup > p:hover,
+.suggest-popup > p:focus,
+.suggest-popup > p:focus-visible {
+  border: none;
+  outline: none;
+  background-color: rgba(0,0,0,0.15);
 }

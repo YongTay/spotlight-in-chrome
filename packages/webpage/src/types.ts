@@ -1,12 +1,15 @@
 
-export interface IProps {}
+export interface IProps {
+  tabIndex?: number | undefined
+}
 
 export interface IState {
   visible?: boolean,
   port?: chrome.runtime.Port | undefined
   search?: string
   inputData?: string,
-  prefix?: string
+  prefix?: string,
+  engine?: string
 }
 
 // 对象的任意类型

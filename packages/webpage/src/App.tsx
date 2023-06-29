@@ -1,9 +1,25 @@
-import {Component} from 'react'
+import * as React from 'react'
 import {IProps, IState, Port, IMessage} from '@/types'
 import css from './App.module.css'
 import SearchInput from '@/components/SearchInput/SearchInput'
+import SearchItem from '@/components/SearchItem/SearchItem.tsx'
 
-class App extends Component<IProps, IState> {
+function isUp(e: React.KeyboardEvent<HTMLDivElement>) {
+  return (e.key === 'ArrowUp' || e.keyCode === 38 || e.code === 'ArrowUp')
+
+}
+
+function isDown(e: React.KeyboardEvent<HTMLDivElement>) {
+  return (e.key === 'ArrowDown' || e.keyCode === 40 || e.code === 'ArrowDown')
+}
+
+function isTab(e: React.KeyboardEvent<HTMLDivElement>) {
+  return (e.key === 'Tab' || e.keyCode === 40 || e.code === 'ArrowDown')
+}
+
+class App extends React.Component<IProps, IState> {
+  private listRef: React.RefObject<any>;
+  private searchRef: React.RefObject<any>;
 
   constructor(props: IProps) {
     super(props)
@@ -11,6 +27,9 @@ class App extends Component<IProps, IState> {
       visible: true,
       port: undefined
     }
+    this.listRef = React.createRef()
+    this.searchRef = React.createRef()
+
     window.addEventListener('keyup', this.handleKeyUp)
   }
 
@@ -25,6 +44,34 @@ class App extends Component<IProps, IState> {
   handleKeyUp = (e: KeyboardEvent) => {
     if (e.key === 'Escape' || e.keyCode === 27 || e.code === 'Escape') {
       this.hidePopup()
+    }
+  }
+
+  handleFocus = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if(isDown(e)) {
+      const list = [...this.listRef.current.childNodes]
+      const len = list.length
+      const index = list.findIndex((ele: any) => ele === e.target)
+      if (index === -1) {
+        list[0].focus()
+      } else if(index + 1 < len) {
+        list[index+1].focus()
+      } else {
+        list[0].focus()
+      }
+    } else if(isUp(e)) {
+      const list = [...this.listRef.current.childNodes]
+      const len = list.length
+      const index = list.findIndex((ele: any) => ele === e.target)
+      if(index === -1) {
+        list[0].focus()
+      } else if(index - 1 >= 0) {
+        list[index-1].focus()
+      } else {
+        list[len-1].focus()
+      }
+    } else if(isTab(e)) {
+      this.searchRef.current.focus()
     }
   }
 
@@ -57,16 +104,26 @@ class App extends Component<IProps, IState> {
     return (
       this.state.visible && <div
         className={css.container}
+        onKeyUp={this.handleFocus}
       >
         <div
           className={css.popup}
         >
-          <SearchInput />
+          <SearchInput ref={this.searchRef} />
+          <div
+            className={css.list}
+            ref={this.listRef}
+          >
+            {
+              Array.from({ length: 10 }).map((_, i) => <SearchItem tabIndex={i+100}/>)
+            }
+          </div>
         </div>
         <div
           className={css.mask}
           onClick={this.hidePopup}
-        ></div>
+        >
+        </div>
       </div>
     )
   }
