@@ -1,8 +1,10 @@
+import {KeyboardEvent} from 'react';
 
 export interface IItem {
   title?: string,
   url?: string,
-  type?: string
+  type?: string,
+  index?: number
 }
 
 export interface IProps {
@@ -12,10 +14,12 @@ export interface IProps {
 
 export interface ISearchInputProps extends IProps {
   onInput: (value: string) => void,
+  onKeyUp: (e: KeyboardEvent, state?: IState) => void
 }
 
 export interface IItemProps extends IProps {
-  clickType: (info: IItem) => void
+  clickType: (info: IItem) => void,
+  onKeyUp: (e: KeyboardEvent, state?: IItem) => void
 }
 
 export interface IState {

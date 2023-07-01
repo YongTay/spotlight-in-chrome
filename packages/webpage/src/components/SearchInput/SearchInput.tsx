@@ -2,6 +2,14 @@ import {ChangeEvent, Component, createRef, KeyboardEvent} from 'react'
 import {ISearchInputProps, IState} from '@/types'
 import css from './SearchInput.module.css'
 
+const engines = {
+  bing: 'https://cn.bing.com/search?q=%s',
+  baidu: 'https://www.baidu.com/s?ie=utf-8&tn=baidu&wd=%s',
+  google: 'https://www.google.com/search?q=%s',
+  github: 'https://github.com/search?q=%s&type=repositories',
+  bbll: 'https://search.bilibili.com/all?keyword=%s'
+}
+
 class SearchInput extends Component<ISearchInputProps, IState> {
   private inputRef: React.RefObject<any>;
 
@@ -20,26 +28,33 @@ class SearchInput extends Component<ISearchInputProps, IState> {
   onInput = (e: ChangeEvent<HTMLInputElement>) => {
     const value:string = e.target.value.trimStart()
 
-    this.props.onInput(value.trim())
 
     // 保存当前的输入，包括@xxx
     this.setState(() => ({ search: value }))
     if(!this.state.visible && /^@.+ /.test(value)) {
-      this.setState(() => ({ visible: true }))
-      e.target.value = ''
       let m = value.match(/(^@.+?[ ]).*/) as RegExpMatchArray
       if (m[1]) {
         const mLen = m[1].length
-        this.setState(() => {
-          return {
-            prefix: m[1].trimEnd(),
-            // 设置显示的值没有前缀@xxx
-            search: value.trimEnd().substring(mLen),
-            engine: value.trimEnd().substring(1, mLen - 1)
-          }
-        })
+        const engine = value.trimEnd().substring(1, mLen - 1)
+        // @ts-ignore
+        if (engines[engine]) {
+          this.setState(() => ({ visible: true }))
+          e.target.value = ''
+          const search = value.trimEnd().substring(mLen)
+          this.setState(() => {
+            return {
+              prefix: m[1].trimEnd(),
+              // 设置显示的值没有前缀@xxx
+              search,
+              engine
+            }
+          })
+          this.props.onInput(search)
+          return
+        }
       }
     }
+    this.props.onInput(value.trim())
   }
 
   onKeyUp = (e: KeyboardEvent) => {
@@ -55,6 +70,7 @@ class SearchInput extends Component<ISearchInputProps, IState> {
         })
       }
     }
+    this.props.onKeyUp(e, this.state)
   }
 
   focus = () => {

@@ -26,14 +26,27 @@ chrome.runtime.onConnect.addListener(port => {
         handleClickRegister(port, msg.value)
         break
       case 'search':
-        handleSearch(port, msg.value)
+        handleSearch(port, msg.value, msg.engine)
         break
       case 'closeTab':
         closeTab(msg.value)
         break
+      case 'existTab':
+        handleExistTab(msg.value)
+        break
+      case 'newTab':
+        handleNewTab(msg.value)
     }
   })
 })
+
+function handleExistTab(index) {
+  chrome.tabs.highlight({ tabs: index }).then(() => {})
+}
+
+function handleNewTab(url) {
+  chrome.tabs.create({ url, active: true }).then(() => {})
+}
 
 function flatTree(tree) {
   const flatArray = []
@@ -62,8 +75,20 @@ async function waitingList(search) {
   }
 }
 
-function handleSearch(port, value) {
-  console.log(value)
+const engines = {
+  bing: 'https://cn.bing.com/search?q=%s',
+  baidu: 'https://www.baidu.com/s?ie=utf-8&tn=baidu&wd=%s',
+  google: 'https://www.google.com/search?q=%s',
+  github: 'https://github.com/search?q=%s&type=repositories',
+  bbll: 'https://search.bilibili.com/all?keyword=%s'
+}
+
+function handleSearch(port, value, engine) {
+  if(engine) {
+    const url = engines[engine] || engines['bing']
+    handleNewTab(url.replace('%s', value))
+    return
+  }
   waitingList(value).then(res => {
     let result = []
     const tabs = res.tabs.filter(i => i.title.includes(value) || i.url.includes(value)).map(o => ({...o, type: 'tab'}))

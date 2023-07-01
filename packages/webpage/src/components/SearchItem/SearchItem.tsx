@@ -1,4 +1,4 @@
-import {Component} from 'react'
+import {Component, KeyboardEvent} from 'react'
 import {IItem, IItemProps, IState} from '@/types.ts'
 import css from './SearchItem.module.css'
 
@@ -9,6 +9,11 @@ class SearchItem extends Component<IItemProps, IState> {
   onClick = () => {
     this.props.clickType(this.props.itemData as IItem)
   }
+
+  handleKeyUp = (e: KeyboardEvent) => {
+    this.props.onKeyUp(e, this.props.itemData)
+  }
+
   render() {
     const tabIndex = this.props.tabIndex as number
     const itemData = this.props.itemData as IItem
@@ -16,6 +21,7 @@ class SearchItem extends Component<IItemProps, IState> {
       <div
         tabIndex={tabIndex}
         className={css.item}
+        onKeyUp={this.handleKeyUp}
       >
         <div
           className={css.title}

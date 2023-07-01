@@ -3,6 +3,7 @@ import {IProps, IState, Port, IMessage, IMap, IItem} from '@/types'
 import css from './App.module.css'
 import SearchInput from '@/components/SearchInput/SearchInput'
 import SearchItem from '@/components/SearchItem/SearchItem.tsx'
+import {KeyboardEvent} from 'react';
 
 function isUp(e: React.KeyboardEvent<HTMLDivElement> | KeyboardEvent) {
   return (e.key === 'ArrowUp' || e.keyCode === 38 || e.code === 'ArrowUp')
@@ -24,7 +25,7 @@ class App extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props)
     this.state = {
-      visible: true,
+      visible: false,
       port: undefined,
       searchList: []
     }
@@ -36,14 +37,10 @@ class App extends React.Component<IProps, IState> {
   }
 
   hidePopup = () => {
-    this.setState(() => {
-      return {
-        visible: false
-      }
-    })
+    this.setState(() => ({ visible: false }))
   }
 
-  handleKeyUp = (e: KeyboardEvent) => {
+  handleKeyUp = (e: KeyboardEvent | any) => {
     if (e.key === 'Escape' || e.keyCode === 27 || e.code === 'Escape') {
       this.hidePopup()
     } else if(isUp(e) || isDown(e)) {
@@ -52,11 +49,8 @@ class App extends React.Component<IProps, IState> {
     }
   }
 
-  handleKeyDown = (e: KeyboardEvent) => {
-    if(isUp(e) || isDown(e)) {
-      e.preventDefault()
-      e.stopPropagation()
-    }
+  handleKeyDown = (e: KeyboardEvent | any) => {
+    this.handleKeyUp(e)
   }
 
   handleFocus = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -136,6 +130,34 @@ class App extends React.Component<IProps, IState> {
     })
   }
 
+  searchEnter = (e: React.KeyboardEvent, state: IState | undefined) => {
+    if(e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13) {
+      this.hidePopup()
+      this.state.port?.postMessage({
+        type: 'search',
+        value: (state as IState).search,
+        engine: (state as IState).engine || 'bing'
+      })
+    }
+  }
+
+  itemEnter = (e: React.KeyboardEvent, data: IItem | undefined) => {
+    if(e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13) {
+      this.hidePopup()
+      if (data?.type === 'tab') {
+        this.state.port?.postMessage({
+          type: 'existTab',
+          value: (data as IItem).index
+        })
+      } else {
+        this.state.port?.postMessage({
+          type: 'newTab',
+          value: (data as IItem).url
+        })
+      }
+    }
+  }
+
   render() {
     const list = this.state.searchList as Array<any>
     return (
@@ -149,6 +171,7 @@ class App extends React.Component<IProps, IState> {
           <SearchInput
             ref={this.searchRef}
             onInput={this.onInput}
+            onKeyUp={this.searchEnter}
           />
           <div
             className={css.list}
@@ -158,6 +181,7 @@ class App extends React.Component<IProps, IState> {
               list.map((item, i) => <SearchItem
                 itemData={item}
                 clickType={this.closeTab}
+                onKeyUp={this.itemEnter}
                 tabIndex={i+100}/>)
             }
           </div>
