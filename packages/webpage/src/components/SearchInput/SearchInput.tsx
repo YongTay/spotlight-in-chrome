@@ -1,11 +1,11 @@
 import {ChangeEvent, Component, createRef, KeyboardEvent} from 'react'
-import {IProps, IState} from '@/types'
+import {ISearchInputProps, IState} from '@/types'
 import css from './SearchInput.module.css'
 
-class SearchInput extends Component<IProps, IState> {
+class SearchInput extends Component<ISearchInputProps, IState> {
   private inputRef: React.RefObject<any>;
 
-  constructor(props: IProps) {
+  constructor(props: ISearchInputProps) {
     super(props)
     this.state = {
       visible: false,
@@ -19,6 +19,9 @@ class SearchInput extends Component<IProps, IState> {
 
   onInput = (e: ChangeEvent<HTMLInputElement>) => {
     const value:string = e.target.value.trimStart()
+
+    this.props.onInput(value.trim())
+
     // 保存当前的输入，包括@xxx
     this.setState(() => ({ search: value }))
     if(!this.state.visible && /^@.+ /.test(value)) {

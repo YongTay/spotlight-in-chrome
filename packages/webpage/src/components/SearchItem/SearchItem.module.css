@@ -8,15 +8,46 @@
   border-bottom: 1px solid #242424;
 }
 
-.item > p {
+p {
   padding: 0;
   margin: 0;
+  user-select: none;
 }
 
 .title {
+  display: flex;
+  justify-content: space-between;
+}
 
+.title > p {
+  max-width: 60%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-weight: 400;
+  font-size: 14px;
+  color: #000000;
+  height: 22px;
+  line-height: 22px;
+}
+
+.title > p:nth-child(2) {
+  color: rgba(0,0,0,0.6);
+}
+
+.title .close:hover,
+.title .close:active,
+.title .close:focus-visible {
+  color: red;
+  cursor: pointer;
 }
 
 .url {
-
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 10px;
+  color: rgba(0,0,0,0.6);
+  font-weight: 400;
 }

@@ -10,9 +10,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
  * @param port
  */
 function handleClickRegister(port) {
-  console.log('register')
   chrome.action.onClicked.addListener(() => {
-    console.log('click...')
     port.postMessage({
       type: 'visible',
       value: true
@@ -26,6 +24,13 @@ chrome.runtime.onConnect.addListener(port => {
     switch (msg.type) {
       case 'register':
         handleClickRegister(port, msg.value)
+        break
+      case 'search':
+        handleSearch(port, msg.value)
+        break
+      case 'closeTab':
+        closeTab(msg.value)
+        break
     }
   })
 })
@@ -45,16 +50,33 @@ function flatTree(tree) {
   return flatArray
 }
 
-
-async function waitingList() {
+async function waitingList(search) {
   const tabs = await chrome.tabs.query({})
-
-  // const tree = await chrome.bookmarks.getTree()
-  // const bookmarks = flatTree(tree)
-  // const history = await chrome.history.search({ text: 'a' })
-  return [...tabs]
+  const tree = await chrome.bookmarks.getTree()
+  const bookmarks = flatTree(tree)
+  const history = await chrome.history.search({ text: search })
+  return {
+    tabs,
+    bookmarks,
+    history
+  }
 }
 
-waitingList()
+function handleSearch(port, value) {
+  console.log(value)
+  waitingList(value).then(res => {
+    let result = []
+    const tabs = res.tabs.filter(i => i.title.includes(value) || i.url.includes(value)).map(o => ({...o, type: 'tab'}))
+    const bookmarks = res.bookmarks.filter(i => i.title.includes(value) || i.url.includes(value)).map(o => ({...o, type: 'bookmarks'}))
+    const history = res.history.map(o => ({...o, type: 'history'}))
+    result = [...tabs, ...bookmarks, ...history]
+    port.postMessage({
+      type: 'result',
+      value: result
+    })
+  })
+}
 
-
+function closeTab(tab) {
+  chrome.tabs.remove(tab.id).then(() => {})
+}

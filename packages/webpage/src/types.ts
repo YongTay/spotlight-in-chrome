@@ -7,16 +7,25 @@ export interface IItem {
 
 export interface IProps {
   tabIndex?: number | undefined,
-  itemData?: IItem
+  itemData?: IItem,
+}
+
+export interface ISearchInputProps extends IProps {
+  onInput: (value: string) => void,
+}
+
+export interface IItemProps extends IProps {
+  clickType: (info: IItem) => void
 }
 
 export interface IState {
   visible?: boolean,
-  port?: chrome.runtime.Port | undefined
+  port?: Port | undefined
   search?: string
   inputData?: string,
   prefix?: string,
-  engine?: string
+  engine?: string,
+  searchList?: Array<any>
 }
 
 // 对象的任意类型

@@ -1,10 +1,13 @@
 import {Component} from 'react'
-import {IItem, IProps, IState} from '@/types.ts'
+import {IItem, IItemProps, IState} from '@/types.ts'
 import css from './SearchItem.module.css'
 
-class SearchItem extends Component<IProps, IState> {
-  constructor(props: IProps) {
+class SearchItem extends Component<IItemProps, IState> {
+  constructor(props: IItemProps) {
     super(props)
+  }
+  onClick = () => {
+    this.props.clickType(this.props.itemData as IItem)
   }
   render() {
     const tabIndex = this.props.tabIndex as number
@@ -14,12 +17,18 @@ class SearchItem extends Component<IProps, IState> {
         tabIndex={tabIndex}
         className={css.item}
       >
-        <p
+        <div
           className={css.title}
-        >{itemData.url}</p>
+        >
+          <p>{itemData.title}</p>
+          <p
+            className={itemData.type === 'tab' ? css.close : ''}
+            onClick={this.onClick}
+          >{itemData.type}</p>
+        </div>
         <p
           className={css.url}
-        >{itemData.title}</p>
+        >{itemData.url}</p>
       </div>
     )
   }

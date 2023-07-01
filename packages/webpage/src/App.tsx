@@ -1,19 +1,19 @@
 import * as React from 'react'
-import {IProps, IState, Port, IMessage} from '@/types'
+import {IProps, IState, Port, IMessage, IMap, IItem} from '@/types'
 import css from './App.module.css'
 import SearchInput from '@/components/SearchInput/SearchInput'
 import SearchItem from '@/components/SearchItem/SearchItem.tsx'
 
-function isUp(e: React.KeyboardEvent<HTMLDivElement>) {
+function isUp(e: React.KeyboardEvent<HTMLDivElement> | KeyboardEvent) {
   return (e.key === 'ArrowUp' || e.keyCode === 38 || e.code === 'ArrowUp')
 
 }
 
-function isDown(e: React.KeyboardEvent<HTMLDivElement>) {
+function isDown(e: React.KeyboardEvent<HTMLDivElement> | KeyboardEvent) {
   return (e.key === 'ArrowDown' || e.keyCode === 40 || e.code === 'ArrowDown')
 }
 
-function isTab(e: React.KeyboardEvent<HTMLDivElement>) {
+function isTab(e: React.KeyboardEvent<HTMLDivElement> | KeyboardEvent) {
   return (e.key === 'Tab' || e.keyCode === 40 || e.code === 'ArrowDown')
 }
 
@@ -25,12 +25,14 @@ class App extends React.Component<IProps, IState> {
     super(props)
     this.state = {
       visible: true,
-      port: undefined
+      port: undefined,
+      searchList: []
     }
     this.listRef = React.createRef()
     this.searchRef = React.createRef()
 
     window.addEventListener('keyup', this.handleKeyUp)
+    window.addEventListener('keydown', this.handleKeyDown)
   }
 
   hidePopup = () => {
@@ -44,10 +46,22 @@ class App extends React.Component<IProps, IState> {
   handleKeyUp = (e: KeyboardEvent) => {
     if (e.key === 'Escape' || e.keyCode === 27 || e.code === 'Escape') {
       this.hidePopup()
+    } else if(isUp(e) || isDown(e)) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+  }
+
+  handleKeyDown = (e: KeyboardEvent) => {
+    if(isUp(e) || isDown(e)) {
+      e.preventDefault()
+      e.stopPropagation()
     }
   }
 
   handleFocus = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
     if(isDown(e)) {
       const list = [...this.listRef.current.childNodes]
       const len = list.length
@@ -77,6 +91,7 @@ class App extends React.Component<IProps, IState> {
 
   componentWillUnmount() {
     window.removeEventListener('keyup', this.handleKeyUp)
+    window.removeEventListener('keydown', this.handleKeyDown)
   }
 
   componentDidMount() {
@@ -85,12 +100,15 @@ class App extends React.Component<IProps, IState> {
       type: 'register',
       value: true
     })
-    port.onMessage.addListener((msg: any) => {
+    port.onMessage.addListener((msg: IMap) => {
       msg = msg as IMessage
       console.log(msg)
       switch (msg.type) {
         case 'visible':
           this.setState(() => ({ visible: true }))
+          break
+        case 'result':
+          this.setState(() => ({searchList: msg.value}))
       }
     })
     this.setState(() => {
@@ -100,7 +118,26 @@ class App extends React.Component<IProps, IState> {
     })
   }
 
+  onInput = (value: string) => {
+    const port = this.state.port as Port
+    port.postMessage({
+      type: 'search',
+      value: value
+    })
+  }
+
+  closeTab = (data: IItem) => {
+    this.state.port?.postMessage({
+      type: 'closeTab',
+      value: data
+    })
+    this.setState(() => {
+      return {searchList : this.state.searchList?.filter(i => i !== data)}
+    })
+  }
+
   render() {
+    const list = this.state.searchList as Array<any>
     return (
       this.state.visible && <div
         className={css.container}
@@ -109,16 +146,19 @@ class App extends React.Component<IProps, IState> {
         <div
           className={css.popup}
         >
-          <SearchInput ref={this.searchRef} />
+          <SearchInput
+            ref={this.searchRef}
+            onInput={this.onInput}
+          />
           <div
             className={css.list}
             ref={this.listRef}
           >
             {
-              Array.from({ length: 10 })
-                .map((_, i) => <SearchItem
-                  itemData={{title: '1213213', url: '223213', type: '2'}}
-                  tabIndex={i+100}/>)
+              list.map((item, i) => <SearchItem
+                itemData={item}
+                clickType={this.closeTab}
+                tabIndex={i+100}/>)
             }
           </div>
         </div>
