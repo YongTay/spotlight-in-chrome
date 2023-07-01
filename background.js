@@ -30,3 +30,31 @@ chrome.runtime.onConnect.addListener(port => {
   })
 })
 
+function flatTree(tree) {
+  const flatArray = []
+  const flat = (data) => {
+    if(Array.isArray(data)) {
+      data.forEach(i => flat(i))
+    } else if(Array.isArray(data.children)) {
+      data.children.forEach(i => flat(i))
+    } else {
+      flatArray.push(data)
+    }
+  }
+  flat(tree)
+  return flatArray
+}
+
+
+async function waitingList() {
+  const tabs = await chrome.tabs.query({})
+
+  // const tree = await chrome.bookmarks.getTree()
+  // const bookmarks = flatTree(tree)
+  // const history = await chrome.history.search({ text: 'a' })
+  return [...tabs]
+}
+
+waitingList()
+
+

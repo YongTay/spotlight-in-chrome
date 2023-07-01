@@ -115,7 +115,10 @@ class App extends React.Component<IProps, IState> {
             ref={this.listRef}
           >
             {
-              Array.from({ length: 10 }).map((_, i) => <SearchItem tabIndex={i+100}/>)
+              Array.from({ length: 10 })
+                .map((_, i) => <SearchItem
+                  itemData={{title: '1213213', url: '223213', type: '2'}}
+                  tabIndex={i+100}/>)
             }
           </div>
         </div>

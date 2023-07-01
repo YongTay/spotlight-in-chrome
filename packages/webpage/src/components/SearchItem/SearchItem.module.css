@@ -1,4 +1,3 @@
-
 .item:focus,
 .item:focus-visible {
   background-color: rgba(0,0,0,0.15);
@@ -12,4 +11,12 @@
 .item > p {
   padding: 0;
   margin: 0;
+}
+
+.title {
+
+}
+
+.url {
+
 }

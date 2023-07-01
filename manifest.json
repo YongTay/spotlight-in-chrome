@@ -25,6 +25,7 @@
     "background": {
         "service_worker": "background.js"
     },
+    "optional_permissions": ["bookmarks", "history"],
     "permissions": [
         "scripting",
         "activeTab",

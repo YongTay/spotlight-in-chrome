@@ -58,9 +58,14 @@ class SearchInput extends Component<IProps, IState> {
     this.inputRef.current.focus()
   }
 
+  componentDidMount() {
+    this.focus()
+  }
+
   render() {
     const pl = this.state.visible ? css.pl0 : css.pl
-    const { search, engine, visible} = this.state
+    const { engine, visible} = this.state
+    const search = this.state.search as string
     return (
       <div
         className={css.searchWrapper}
@@ -79,7 +84,6 @@ class SearchInput extends Component<IProps, IState> {
           onInput={this.onInput}
           onKeyUp={this.onKeyUp}
           value={search}
-          autoFocus={true}
           tabIndex={99}
         />
         {

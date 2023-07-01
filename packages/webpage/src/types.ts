@@ -1,6 +1,13 @@
 
+export interface IItem {
+  title?: string,
+  url?: string,
+  type?: string
+}
+
 export interface IProps {
-  tabIndex?: number | undefined
+  tabIndex?: number | undefined,
+  itemData?: IItem
 }
 
 export interface IState {
