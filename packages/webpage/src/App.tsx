@@ -3,7 +3,6 @@ import {IProps, IState, Port, IMessage, IMap, IItem} from '@/types'
 import css from './App.module.css'
 import SearchInput from '@/components/SearchInput/SearchInput'
 import SearchItem from '@/components/SearchItem/SearchItem.tsx'
-import {KeyboardEvent} from 'react';
 
 function isUp(e: React.KeyboardEvent<HTMLDivElement> | KeyboardEvent) {
   return (e.key === 'ArrowUp' || e.keyCode === 38 || e.code === 'ArrowUp')
@@ -37,7 +36,10 @@ class App extends React.Component<IProps, IState> {
   }
 
   hidePopup = () => {
-    this.setState(() => ({ visible: false }))
+    this.setState(() => ({ visible: false, searchList: [] }))
+    setTimeout(() => {
+      this.setState(() => ({ visible: false }))
+    })
   }
 
   handleKeyUp = (e: KeyboardEvent | any) => {
@@ -96,10 +98,11 @@ class App extends React.Component<IProps, IState> {
     })
     port.onMessage.addListener((msg: IMap) => {
       msg = msg as IMessage
-      console.log(msg)
       switch (msg.type) {
         case 'visible':
-          this.setState(() => ({ visible: true }))
+          this.setState(() => ({ visible: msg.value }), () => {
+            this.searchRef.current.focus()
+          })
           break
         case 'result':
           this.setState(() => ({searchList: msg.value}))
@@ -139,6 +142,7 @@ class App extends React.Component<IProps, IState> {
         engine: (state as IState).engine || 'bing'
       })
     }
+
   }
 
   itemEnter = (e: React.KeyboardEvent, data: IItem | undefined) => {
@@ -160,10 +164,12 @@ class App extends React.Component<IProps, IState> {
 
   render() {
     const list = this.state.searchList as Array<any>
+    const visible = this.state.visible
     return (
-      this.state.visible && <div
+       <div
         className={css.container}
         onKeyUp={this.handleFocus}
+        style={{ display: visible ? 'block' : 'none'}}
       >
         <div
           className={css.popup}

@@ -19,7 +19,7 @@ export interface ISearchInputProps extends IProps {
 
 export interface IItemProps extends IProps {
   clickType: (info: IItem) => void,
-  onKeyUp: (e: KeyboardEvent, state?: IItem) => void
+  onKeyUp: (e: KeyboardEvent | any, state?: IItem) => void
 }
 
 export interface IState {

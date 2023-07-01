@@ -104,6 +104,7 @@ class SearchInput extends Component<ISearchInputProps, IState> {
           onKeyUp={this.onKeyUp}
           value={search}
           tabIndex={99}
+          autoFocus={true}
         />
         {
           !visible && (<div

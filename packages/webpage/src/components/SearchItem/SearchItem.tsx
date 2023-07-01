@@ -14,6 +14,12 @@ class SearchItem extends Component<IItemProps, IState> {
     this.props.onKeyUp(e, this.props.itemData)
   }
 
+  handleDbClick = () => {
+    this.props.onKeyUp({
+      code: 'Enter'
+    }, this.props.itemData)
+  }
+
   render() {
     const tabIndex = this.props.tabIndex as number
     const itemData = this.props.itemData as IItem
@@ -22,6 +28,7 @@ class SearchItem extends Component<IItemProps, IState> {
         tabIndex={tabIndex}
         className={css.item}
         onKeyUp={this.handleKeyUp}
+        onDoubleClick={this.handleDbClick}
       >
         <div
           className={css.title}

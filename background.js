@@ -42,6 +42,7 @@ chrome.runtime.onConnect.addListener(port => {
 
 function handleExistTab(index) {
   chrome.tabs.highlight({ tabs: index }).then(() => {})
+  chrome.tabs.update({ active: true }).then(() => {})
 }
 
 function handleNewTab(url) {

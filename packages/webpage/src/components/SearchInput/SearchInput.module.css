@@ -3,6 +3,7 @@
   position: relative;
   border: 1px solid #1a1a1a;
   border-radius: 5px;
+  overflow: hidden;
 }
 
 .search-wrapper:focus {
@@ -20,6 +21,15 @@
   color: #1a1a1a;
   background-color: transparent;
   border: none;
+  box-shadow: none;
+}
+
+.search-wrapper > input:focus,
+.search-wrapper > input:focus-visible,
+.search-wrapper > input:active {
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 
 .pl {
