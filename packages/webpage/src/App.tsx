@@ -1,8 +1,10 @@
 import * as React from 'react'
-import {IProps, IState, Port, IMessage, IMap, IItem} from '@/types'
+import {IProps, IState, IItem} from '@/types'
 import css from './App.module.css'
 import SearchInput from '@/components/SearchInput/SearchInput'
 import SearchItem from '@/components/SearchItem/SearchItem.tsx'
+// @ts-ignore
+import { Connector } from '@spotlight/events'
 
 function isUp(e: React.KeyboardEvent<HTMLDivElement> | KeyboardEvent) {
   return (e.key === 'ArrowUp' || e.keyCode === 38 || e.code === 'ArrowUp')
@@ -20,12 +22,13 @@ function isTab(e: React.KeyboardEvent<HTMLDivElement> | KeyboardEvent) {
 class App extends React.Component<IProps, IState> {
   private listRef: React.RefObject<any>;
   private searchRef: React.RefObject<any>;
+  // @ts-ignore
+  private connector: Connector;
 
   constructor(props: IProps) {
     super(props)
     this.state = {
       visible: false,
-      port: undefined,
       searchList: []
     }
     this.listRef = React.createRef()
@@ -33,6 +36,9 @@ class App extends React.Component<IProps, IState> {
 
     window.addEventListener('keyup', this.handleKeyUp)
     window.addEventListener('keydown', this.handleKeyDown)
+
+    const connector: Connector = new Connector('spotlight')
+    this.connector = connector
   }
 
   hidePopup = () => {
@@ -91,43 +97,23 @@ class App extends React.Component<IProps, IState> {
   }
 
   componentDidMount() {
-    const port: Port = chrome.runtime.connect({ name: 'spotlight' })
-    port.postMessage({
-      type: 'register',
-      value: true
-    })
-    port.onMessage.addListener((msg: IMap) => {
-      msg = msg as IMessage
-      switch (msg.type) {
-        case 'visible':
-          this.setState(() => ({ visible: msg.value }), () => {
-            this.searchRef.current.focus()
-          })
-          break
-        case 'result':
-          this.setState(() => ({searchList: msg.value}))
-      }
-    })
-    this.setState(() => {
-      return {
-        port: port
-      }
+    this.connector.onVisible(() => {
+      this.setState(() => ({ visible: true }), () => {
+        this.searchRef.current.focus()
+      })
     })
   }
 
   onInput = (value: string) => {
-    const port = this.state.port as Port
-    port.postMessage({
-      type: 'search',
+    this.connector.search({
       value: value
+    }, (result: any) => {
+      console.log(result)
     })
   }
 
   closeTab = (data: IItem) => {
-    this.state.port?.postMessage({
-      type: 'closeTab',
-      value: data
-    })
+    this.connector.closeTab(data)
     this.setState(() => {
       return {searchList : this.state.searchList?.filter(i => i !== data)}
     })
@@ -136,28 +122,20 @@ class App extends React.Component<IProps, IState> {
   searchEnter = (e: React.KeyboardEvent, state: IState | undefined) => {
     if(e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13) {
       this.hidePopup()
-      this.state.port?.postMessage({
-        type: 'search',
-        value: (state as IState).search,
-        engine: (state as IState).engine || 'bing'
+      this.connector.search({
+        value: state?.search,
+        engine: state?.engine || 'bing'
       })
     }
-
   }
 
   itemEnter = (e: React.KeyboardEvent, data: IItem | undefined) => {
     if(e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13) {
       this.hidePopup()
       if (data?.type === 'tab') {
-        this.state.port?.postMessage({
-          type: 'existTab',
-          value: (data as IItem).index
-        })
+        this.connector.highlightTab({ index: data.index })
       } else {
-        this.state.port?.postMessage({
-          type: 'newTab',
-          value: (data as IItem).url
-        })
+        this.connector.newTab({ url: data?.url })
       }
     }
   }

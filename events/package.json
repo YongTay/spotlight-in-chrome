@@ -1,0 +1,12 @@
+{
+  "name": "@spotlight/events",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "main": "event.js",
+  "scripts": {
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.238"
+  }
+}
