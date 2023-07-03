@@ -4,12 +4,12 @@ declare interface Message {
   value: any
 }
 
-declare class Listener {
+declare class backgroundEvent {
   onRegister(cb: (message: Message, port: chrome.runtime.Port) => void)
   onSearch: (cb: (message: Message) => Array<any>) => void
 }
 
-declare class Connector {
+declare class pageEvent {
   constructor(name: string)
   connect: () => void
   pong:(message: Message, port: chrome.runtime.Port) => void

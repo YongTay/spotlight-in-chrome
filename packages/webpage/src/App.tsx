@@ -4,7 +4,7 @@ import css from './App.module.css'
 import SearchInput from '@/components/SearchInput/SearchInput'
 import SearchItem from '@/components/SearchItem/SearchItem.tsx'
 // @ts-ignore
-import { Connector } from '@spotlight/events'
+import { pageEvent } from '@spotlight/events'
 
 function isUp(e: React.KeyboardEvent<HTMLDivElement> | KeyboardEvent) {
   return (e.key === 'ArrowUp' || e.keyCode === 38 || e.code === 'ArrowUp')
@@ -37,7 +37,7 @@ class App extends React.Component<IProps, IState> {
     window.addEventListener('keyup', this.handleKeyUp)
     window.addEventListener('keydown', this.handleKeyDown)
 
-    const connector: Connector = new Connector('spotlight')
+    const connector: pageEvent = new pageEvent('spotlight')
     this.connector = connector
   }
 
@@ -46,6 +46,9 @@ class App extends React.Component<IProps, IState> {
     setTimeout(() => {
       this.setState(() => ({ visible: false }))
     })
+    setTimeout(() => {
+      this.connector.disconnect()
+    }, 100)
   }
 
   handleKeyUp = (e: KeyboardEvent | any) => {
@@ -102,13 +105,14 @@ class App extends React.Component<IProps, IState> {
         this.searchRef.current.focus()
       })
     })
+    this.connector.onResult((data: any) => {
+      this.setState(() => ({ searchList: data }))
+    })
   }
 
   onInput = (value: string) => {
     this.connector.search({
       value: value
-    }, (result: any) => {
-      console.log(result)
     })
   }
 

@@ -12,26 +12,28 @@ const EventType = {
 }
 
 function empty() {}
-export class Listener {
+
+export class backgroundEvent {
   constructor(name) {
     this.name = name
-    chrome.runtime.onMessage.addListener((msg) => {
-      if(msg.type === EventType.ping) {
-        this.ping()
-      }
-    })
-    this._listen()
   }
 
-  _postMessage(message, port) {
-    const curPort = port || this.port
+  connect() {
+    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+      this.port = chrome.tabs.connect(tabs[0].id, {name: this.name})
+      this.ping()
+      this.listen()
+    })
+  }
+
+  _postMessage(message) {
     if(typeof message === 'string') {
-      curPort.postMessage({
+      this.port.postMessage({
         type: message,
         value: message
       })
     } else {
-      curPort.postMessage(message)
+      this.port.postMessage(message)
     }
   }
 
@@ -60,8 +62,8 @@ export class Listener {
   }
   onRegister(cb) {
     this.register = (data) => {
-      this._postMessage(EventType.register)
-      this.register = cb || empty
+      const fn = cb || empty
+      fn(data.value)
     }
   }
 
@@ -96,42 +98,35 @@ export class Listener {
 
   ping() {
     console.log('ping')
-    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-      const tabPort = chrome.tabs.connect(tabs[0].id, { name: this.name })
-      this.port = tabPort
-      this._postMessage('pong', tabPort)
-      this.listen()
-    })
+    this._postMessage(EventType.pong)
   }
 
   listen() {
-    // this.port.onMessage.addListener((msg, port) => {
-    //   this.port = port
-    //   const fnName = msg.type
-    //   this[fnName](msg, port)
-    // })
+    this.port.onMessage.addListener((msg, port) => {
+      this.port = port
+      const fnName = msg.type
+      this[fnName](msg, port)
+    })
   }
 }
 
 
 
 
-export class Connector {
+export class pageEvent {
   constructor(name) {
     this.name = name
     this.connect()
-    this._listen()
   }
 
-  _postMessage(message, port) {
-    const curPort = port || this.port
+  _postMessage(message) {
     if(typeof message === 'string') {
-      curPort.postMessage({
+      this.port.postMessage({
         type: message,
         value: message
       })
     } else {
-      curPort.postMessage(message)
+      this.port.postMessage(message)
     }
   }
 
@@ -139,7 +134,6 @@ export class Connector {
     chrome.runtime.onConnect.addListener(port => {
       if(this.name !== port.name) return
       this.port = port
-      this._postMessage(EventType.ping, port)
       port.onMessage.addListener((msg, port) => {
         if(msg.type === EventType.pong) {
           this.pong(msg, port)
@@ -147,10 +141,10 @@ export class Connector {
         this.listen(port)
       })
     })
-    chrome.runtime.sendMessage({
-      type: EventType.ping,
-      value: EventType.ping
-    }).then(() => {})
+  }
+
+  disconnect() {
+    this.port.disconnect()
   }
 
   listen(port) {
@@ -177,13 +171,12 @@ export class Connector {
   }
 
   // 发送
-  search(searchInfo, cb) {
+  search(searchInfo) {
     this._postMessage({
       ...searchInfo,
       type: EventType.search,
       value: searchInfo.value
     })
-    this.onResult(cb)
   }
 
   closeTab(tab) {
