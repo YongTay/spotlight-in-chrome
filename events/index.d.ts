@@ -16,3 +16,7 @@ declare class pageEvent {
   register: () => void
   onVisible: () => void
 }
+
+declare class TabEvent {}
+
+declare class RuntimeEvent {}

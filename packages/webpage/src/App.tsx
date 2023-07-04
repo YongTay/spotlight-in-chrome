@@ -6,6 +6,9 @@ import SearchItem from '@/components/SearchItem/SearchItem.tsx'
 // @ts-ignore
 import { pageEvent } from '@spotlight/events'
 
+// @ts-ignore
+import RuntimeEvent from '@spotlight/events/runtimeEvent.js'
+
 function isUp(e: React.KeyboardEvent<HTMLDivElement> | KeyboardEvent) {
   return (e.key === 'ArrowUp' || e.keyCode === 38 || e.code === 'ArrowUp')
 
@@ -23,7 +26,7 @@ class App extends React.Component<IProps, IState> {
   private listRef: React.RefObject<any>;
   private searchRef: React.RefObject<any>;
   // @ts-ignore
-  private connector: Connector;
+  private event: any;
 
   constructor(props: IProps) {
     super(props)
@@ -37,8 +40,8 @@ class App extends React.Component<IProps, IState> {
     window.addEventListener('keyup', this.handleKeyUp)
     window.addEventListener('keydown', this.handleKeyDown)
 
-    const connector: pageEvent = new pageEvent('spotlight')
-    this.connector = connector
+    const event = new RuntimeEvent('spotlight')
+    this.event = event
   }
 
   hidePopup = () => {
@@ -47,8 +50,14 @@ class App extends React.Component<IProps, IState> {
       this.setState(() => ({ visible: false }))
     })
     setTimeout(() => {
-      this.connector.disconnect()
+      this.event.disconnect()
     }, 100)
+  }
+
+  showPopup() {
+    this.setState(() => ({ visible: true }), () => {
+      this.searchRef.current.focus()
+    })
   }
 
   handleKeyUp = (e: KeyboardEvent | any) => {
@@ -100,24 +109,22 @@ class App extends React.Component<IProps, IState> {
   }
 
   componentDidMount() {
-    this.connector.onVisible(() => {
-      this.setState(() => ({ visible: true }), () => {
-        this.searchRef.current.focus()
-      })
+    this.event.onVisible(() => {
+      this.showPopup()
     })
-    this.connector.onResult((data: any) => {
+    this.event.onResult((data: any) => {
       this.setState(() => ({ searchList: data }))
     })
   }
 
   onInput = (value: string) => {
-    this.connector.search({
+    this.event.search({
       value: value
     })
   }
 
   closeTab = (data: IItem) => {
-    this.connector.closeTab(data)
+    this.event.closeTab(data)
     this.setState(() => {
       return {searchList : this.state.searchList?.filter(i => i !== data)}
     })
@@ -126,7 +133,7 @@ class App extends React.Component<IProps, IState> {
   searchEnter = (e: React.KeyboardEvent, state: IState | undefined) => {
     if(e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13) {
       this.hidePopup()
-      this.connector.search({
+      this.event.search({
         value: state?.search,
         engine: state?.engine || 'bing'
       })
@@ -137,9 +144,9 @@ class App extends React.Component<IProps, IState> {
     if(e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13) {
       this.hidePopup()
       if (data?.type === 'tab') {
-        this.connector.highlightTab({ index: data.index })
+        this.event.highlightTab({ index: data.index })
       } else {
-        this.connector.newTab({ url: data?.url })
+        this.event.newTab({ url: data?.url })
       }
     }
   }

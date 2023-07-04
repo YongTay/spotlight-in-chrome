@@ -1,61 +1,66 @@
 
 import { backgroundEvent } from './events/event.js'
-
+import TabEvent from './events/tabEvent.js';
 
 chrome.action.onClicked.addListener(() => {
-  active()
+  activeEvent()
 })
-function active() {
-  const listener = new backgroundEvent('spotlight')
-  listener.onRegister(() => {
-    listener.visible()
+
+function activeEvent() {
+  const event = new TabEvent('spotlight')
+  event.onRegister(() => {
+    event.visible()
   })
-  listener.onSearch((data) => {
-    const engine = data.engine
-    const value = data.value
-    if (engine) {
-      const url = engines[engine] || engines['bing']
-      handleNewTab(url.replace('%s', value))
-      return
-    }
-    return waitingList(value).then(res => {
-      let result = []
-      const tabs = res.tabs.filter(i => i.title.includes(value) || i.url.includes(value)).map(o => ({
-        ...o,
-        type: 'tab'
-      }))
-      const bookmarks = res.bookmarks.filter(i => i.title.includes(value) || i.url.includes(value)).map(o => ({
-        ...o,
-        type: 'bookmarks'
-      }))
-      const history = res.history.map(o => ({...o, type: 'history'}))
-      result = [...tabs, ...bookmarks, ...history]
-      return result
+
+  event.onSearch((_, data) => {
+    search(data).then(res => {
+      event.result(res)
     })
   })
 
-  listener.onCloseTab((tab) => {
+  event.onCloseTab((tab) => {
     closeTab(tab)
   })
 
-  listener.onHighlight((tab) => {
-    chrome.tabs.highlight({tabs: tab.index}).then(() => {
-    })
+  event.onHighlight((tab) => {
+    chrome.tabs.highlight({tabs: tab.index}).then(() => {})
   })
 
-  listener.onNewTab((tab) => {
-    chrome.tabs.create({url: tab.url, active: true}).then(() => {
-    })
+  event.onNewTab((tab) => {
+    chrome.tabs.create({url: tab.url, active: true}).then(() => {})
   })
-
-  listener.connect()
 }
+
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.reload) {
     chrome.runtime.reload()
     sendResponse({finish: true})
   }
 })
+
+function search(data) {
+  const engine = data.engine
+  const value = data.value
+  if (engine) {
+    const url = engines[engine] || engines['bing']
+    handleNewTab(url.replace('%s', value))
+    return
+  }
+  return waitingList(value).then(res => {
+    let result = []
+    const tabs = res.tabs.filter(i => i.title.includes(value) || i.url.includes(value)).map(o => ({
+      ...o,
+      type: 'tab'
+    }))
+    const bookmarks = res.bookmarks.filter(i => i.title.includes(value) || i.url.includes(value)).map(o => ({
+      ...o,
+      type: 'bookmarks'
+    }))
+    const history = res.history.map(o => ({...o, type: 'history'}))
+    result = [...tabs, ...bookmarks, ...history]
+    return result
+  })
+}
 
 function handleNewTab(url) {
   chrome.tabs.create({ url, active: true }).then(() => {})
