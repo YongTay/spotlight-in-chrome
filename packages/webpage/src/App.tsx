@@ -4,9 +4,6 @@ import css from './App.module.css'
 import SearchInput from '@/components/SearchInput/SearchInput'
 import SearchItem from '@/components/SearchItem/SearchItem.tsx'
 // @ts-ignore
-import { pageEvent } from '@spotlight/events'
-
-// @ts-ignore
 import RuntimeEvent from '@spotlight/events/runtimeEvent.js'
 
 function isUp(e: React.KeyboardEvent<HTMLDivElement> | KeyboardEvent) {
@@ -26,7 +23,7 @@ class App extends React.Component<IProps, IState> {
   private listRef: React.RefObject<any>;
   private searchRef: React.RefObject<any>;
   // @ts-ignore
-  private event: any;
+  private event: RuntimeEvent;
 
   constructor(props: IProps) {
     super(props)
