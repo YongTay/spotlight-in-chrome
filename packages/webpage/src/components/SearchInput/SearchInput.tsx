@@ -25,6 +25,10 @@ class SearchInput extends Component<ISearchInputProps, IState> {
     this.inputRef = createRef()
   }
 
+  clearSearch() {
+    this.setState(() => ({search: ''}))
+  }
+
   onInput = (e: ChangeEvent<HTMLInputElement>) => {
     const value:string = e.target.value.trimStart()
 

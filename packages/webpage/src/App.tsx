@@ -45,7 +45,11 @@ class App extends React.Component<IProps, IState> {
   }
 
   hidePopup = () => {
-    this.setState(() => ({ visible: false, searchList: [] }))
+    this.setState(() => ({
+      visible: false,
+      searchList: []
+    }))
+    this.searchRef.current.clearSearch()
     setTimeout(() => {
       this.setState(() => ({ visible: false }))
     })

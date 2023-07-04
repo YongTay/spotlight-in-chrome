@@ -13,7 +13,7 @@ function activeEvent() {
   })
 
   event.onSearch((_, data) => {
-    search(data).then(res => {
+    search(data.value).then(res => {
       event.result(res)
     })
   })

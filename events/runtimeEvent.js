@@ -47,7 +47,7 @@ class RuntimeEvent {
   search(data) {
     this.postMessage({
       type: EventType.search,
-      value: data.value
+      value: data
     })
   }
   closeTab(data) {
