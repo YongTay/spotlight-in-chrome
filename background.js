@@ -98,7 +98,8 @@ const engines = {
   baidu: 'https://www.baidu.com/s?ie=utf-8&tn=baidu&wd=%s',
   google: 'https://www.google.com/search?q=%s',
   github: 'https://github.com/search?q=%s&type=repositories',
-  bbll: 'https://search.bilibili.com/all?keyword=%s'
+  bbll: 'https://search.bilibili.com/all?keyword=%s',
+  npm: 'https://www.npmjs.com/search?q=%s'
 }
 
 function handleSearch(port, value, engine) {
