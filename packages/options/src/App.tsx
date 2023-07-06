@@ -1,15 +1,13 @@
 import React from 'react'
 import { Layout } from 'antd'
 import css from './App.module.scss'
-import router from '@/router/router.tsx'
-import {RouterProvider} from 'react-router-dom';
 import SiderMenu from '@/components/SiderMenu/SiderMenu.tsx';
 import Main from '@/components/Main/Main.tsx';
+import {Outlet} from 'react-router-dom';
 
 const { Sider, Content } = Layout
 
 const App: React.FC = () => {
-
   return (
     <Layout className={css.full}>
       <Sider className={css.sider}>
@@ -17,7 +15,7 @@ const App: React.FC = () => {
       </Sider>
       <Content className={css.content} >
         <Main>
-          <RouterProvider router={router} />
+          <Outlet />
         </Main>
       </Content>
     </Layout>
