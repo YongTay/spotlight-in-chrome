@@ -23,3 +23,8 @@ export interface IMainProps {
 export interface IMainState {
 
 }
+
+export interface IMetaWrapperProps {
+  title: string,
+  name?: string
+}

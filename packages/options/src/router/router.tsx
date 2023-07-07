@@ -1,5 +1,7 @@
 import {createBrowserRouter} from 'react-router-dom'
 import App from '../App.tsx'
+import MetaWrapper from '@/components/MetaWrapper/MetaWrapper.tsx';
+import Home from '@/components/Home/Home.tsx';
 
 export default createBrowserRouter([
   {
@@ -8,15 +10,15 @@ export default createBrowserRouter([
     children: [
       {
         path: 'home',
-        element: <p>HOME</p>
+        element: (<MetaWrapper title='home' name="HOME"> <Home /> </MetaWrapper>)
       },
       {
         path: 'engine',
-        element: (<p>ENGINE</p>)
+        element: (<MetaWrapper title="engine" name="搜索引擎"><p>ENGINE</p></MetaWrapper>)
       },
       {
-        path: '/contact',
-        element: <p>CONTACT</p>
+        path: 'about',
+        element: (<MetaWrapper title="about" name="关于"><p>ABOUT</p></MetaWrapper>)
       }
     ]
   },
