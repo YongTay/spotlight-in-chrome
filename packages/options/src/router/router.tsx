@@ -2,6 +2,7 @@ import {createBrowserRouter} from 'react-router-dom'
 import App from '../App.tsx'
 import MetaWrapper from '@/components/MetaWrapper/MetaWrapper.tsx';
 import Home from '@/components/Home/Home.tsx';
+import EngineSetting from '@/views/Setting/Engine/Engine.tsx';
 
 export default createBrowserRouter([
   {
@@ -14,7 +15,7 @@ export default createBrowserRouter([
       },
       {
         path: 'engine',
-        element: (<MetaWrapper title="engine" name="搜索引擎"><p>ENGINE</p></MetaWrapper>)
+        element: (<MetaWrapper title="engine" name="搜索引擎"><EngineSetting /></MetaWrapper>)
       },
       {
         path: 'about',

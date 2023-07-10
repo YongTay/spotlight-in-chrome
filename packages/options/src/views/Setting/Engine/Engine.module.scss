@@ -1,0 +1,38 @@
+.main {
+  min-width: 500px;
+  max-width: 80%;
+  padding-top: 100px;
+}
+
+.title {
+  font-size: 16px;
+  color: #000000;
+}
+
+.tip {
+  font-size: 12px;
+  color: rgba(0,0,0,0.4);
+}
+
+.table {
+  user-select: none;
+}
+
+.edit-icon {
+  font-size: 20px;
+  user-select: none;
+  &:hover {
+    color: #068FFF;
+  }
+}
+
+.operate-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
+}
+
+.edit-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
