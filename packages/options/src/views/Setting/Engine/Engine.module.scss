@@ -16,13 +16,19 @@
 
 .table {
   user-select: none;
+  td {
+    padding: 8px 16px!important;
+  }
 }
 
 .edit-icon {
   font-size: 20px;
   user-select: none;
+  padding: 5px;
+  border-radius: 50%;
   &:hover {
     color: #068FFF;
+    background-color: rgba(6,143,255,0.1);
   }
 }
 

@@ -31,10 +31,10 @@ const EngineDialog: React.FC<EngineDialogProps> = (props) => {
           throw new Error('更新状态下，rowData 不能为空')
         }
       }
-    } else if(preOpen.current) {
-      form.resetFields()
+      if(preOpen.current === false) {
+        form.resetFields()
+      }
     }
-
   }, [props.open, props.isAdd])
 
   const onOk = () => {
@@ -112,9 +112,6 @@ const Edit: React.FC<{
 }
 
 const Engine: React.FC = () => {
-  // const list: Array<DataType> = [
-  //   {key: '1', engine: '百度', keyword: 'baidu', url: 'https://123.com'}
-  // ]
   const [list, setList] = useState<DataType[]>([])
   const [open, setOpen] = useState<boolean>()
   const [rowData, setRowData] = useState<DataType>()
