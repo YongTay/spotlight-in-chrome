@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import css from './Engine.module.scss'
 import {EditOutlined, MoreOutlined} from '@ant-design/icons'
 import {Table, Modal, Form, Input, Button, Popover,  ModalFuncProps, TableColumnProps} from 'antd';
@@ -18,10 +18,6 @@ interface EngineDialogProps extends ModalFuncProps {
 
 const EngineDialog: React.FC<EngineDialogProps> = (props) => {
   const [form] = Form.useForm<DataType>()
-  const preOpen = useRef<boolean>()
-  useEffect(() => {
-    preOpen.current = props.open
-  }, [props.open])
   useEffect(() => {
     if(props.open) {
       if (props.isAdd === false) {
@@ -31,9 +27,10 @@ const EngineDialog: React.FC<EngineDialogProps> = (props) => {
           throw new Error('更新状态下，rowData 不能为空')
         }
       }
-      if(preOpen.current === false) {
-        form.resetFields()
-      }
+    }
+    // 关闭时清空输入框
+    if (props.open === false) {
+      form.resetFields()
     }
   }, [props.open, props.isAdd])
 
