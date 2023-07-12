@@ -3,6 +3,7 @@ import {IMetaWrapperProps, IProps, IState} from '@/types.ts'
 import router from '@/router/router.tsx';
 import {Menu, MenuProps} from 'antd';
 import {RouteObject, useNavigate} from 'react-router-dom'
+import css from './SiderMenu.module.scss'
 
 function getRouterMeta(router: RouteObject, prop: keyof IMetaWrapperProps): IMetaWrapperProps[keyof IMetaWrapperProps] {
   const element = router.element as ReactElement<IMetaWrapperProps>
@@ -39,6 +40,7 @@ const Nav: React.FC<{items: any}> = (props) => {
   }
   return (
     <Menu
+      className={css.menu}
       onClick={onClick}
       mode="inline"
       items={props.items}

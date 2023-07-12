@@ -1,10 +1,10 @@
-import {createBrowserRouter} from 'react-router-dom'
+import {createHashRouter} from 'react-router-dom'
 import App from '../App.tsx'
 import MetaWrapper from '@/components/MetaWrapper/MetaWrapper.tsx';
 import Home from '@/components/Home/Home.tsx';
 import EngineSetting from '@/views/Setting/Engine/Engine.tsx';
 
-export default createBrowserRouter([
+export default createHashRouter([
   {
     path: '/',
     element: <App/>,

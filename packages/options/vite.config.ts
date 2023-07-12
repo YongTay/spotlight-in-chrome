@@ -4,7 +4,8 @@ import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 import path from 'path'
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: mode === 'development' ? '/' : 'packages/options/dist/',
+  // base: mode === 'development' ? '/' : 'packages/options/dist/',
+  base: './',
   plugins: [
     react(),
     cssInjectedByJsPlugin()
