@@ -21,6 +21,7 @@ function isTab(e: React.KeyboardEvent<HTMLDivElement> | KeyboardEvent) {
 
 class App extends React.Component<IProps, IState & {
   engines: Record<string, string>
+  defaultEngine: string
 }> {
   private listRef: React.RefObject<any>;
   private searchRef: React.RefObject<any>;
@@ -32,7 +33,8 @@ class App extends React.Component<IProps, IState & {
     this.state = {
       visible: false,
       searchList: [],
-      engines: {}
+      engines: {},
+      defaultEngine: ''
     }
     this.listRef = React.createRef()
     this.searchRef = React.createRef()
@@ -45,7 +47,6 @@ class App extends React.Component<IProps, IState & {
   }
 
   hidePopup = () => {
-    console.log('hide')
     this.setState(() => ({
       searchList: []
     }))
@@ -120,7 +121,14 @@ class App extends React.Component<IProps, IState & {
       this.setState(() => ({ searchList: data }))
     })
     this.event.onEngines((data: Record<string, string>) => {
-      this.setState(() => ({ engines: data }))
+      const engines: Record<string, string> = {}
+      for(const k in data) {
+        if(k !== 'default') {
+          engines[k] = data[k]
+        }
+      }
+      console.log(data)
+      this.setState(() => ({ engines , defaultEngine: data.default}))
     })
   }
 
@@ -177,7 +185,7 @@ class App extends React.Component<IProps, IState & {
             onInput={this.onInput}
             onEnter={this.searchEnter}
             engines={this.state.engines}
-            defaultEngine={Object.keys(this.state.engines)[0]}
+            defaultEngine={this.state.defaultEngine}
           />
           <div
             className={css.list}

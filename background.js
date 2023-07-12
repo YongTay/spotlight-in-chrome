@@ -45,7 +45,7 @@ async function search(data) {
   const value = data.value
   if (engine) {
     const engines = await createEnginesData()
-    const url = engines[engine] || engines['bing']
+    const url = engines[engine] || engines.default
     handleNewTab(url.replace('%s', value))
     return
   }
@@ -101,22 +101,26 @@ const KEY = 'spotlight'
 const defaultEngines = {
   bing: 'https://cn.bing.com/search?q=%s',
   baidu: 'https://www.baidu.com/s?ie=utf-8&tn=baidu&wd=%s',
-  google: 'https://www.google.com/search?q=%s'
+  google: 'https://www.google.com/search?q=%s',
+  default: 'bing'
 }
 
 function createEnginesData() {
   return chrome.storage.sync.get(KEY)
     .then(res => res[KEY])
-    .then(res => res['engines'])
+    .then(res => res && res['engines'])
     .then(res => {
-      const ret = {}
+      const ret = {
+        default: 'bing'
+      }
       if(!res) return defaultEngines
-      let first
       for(const k in res) {
         const val = res[k]
+        if(val.default) {
+          ret.default = val.keyword
+        }
         ret[val.keyword] = val.url
       }
-
       return ret
     })
 }
