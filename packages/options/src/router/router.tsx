@@ -2,8 +2,8 @@ import {createHashRouter} from 'react-router-dom'
 import App from '../App.tsx'
 import MetaWrapper from '@/components/MetaWrapper/MetaWrapper.tsx';
 import Home from '@/components/Home/Home.tsx';
-import EngineSetting from '@/views/Setting/Engine/Engine.tsx';
-
+import EngineSetting from '@/views/Setting/Engine/Engine.tsx'
+import Bookmarks from '@/views/Setting/Bookmarks/Bookmarks.tsx'
 export default createHashRouter([
   {
     path: '/',
@@ -16,6 +16,10 @@ export default createHashRouter([
       {
         path: 'engine',
         element: (<MetaWrapper title="engine" name="搜索引擎"><EngineSetting /></MetaWrapper>)
+      },
+      {
+        path: 'bookmarks',
+        element: (<MetaWrapper title="bookmarks" name="书签"><Bookmarks /></MetaWrapper>)
       },
       {
         path: 'about',
