@@ -1,5 +1,5 @@
 {
-  "name": "spotlight-in-chrome",
+"name": "spotlight-in-chrome",
   "version": "0.0.1",
   "description": "在chrome 中快速搜索当前页签，书签以及历史记录",
   "private": true,

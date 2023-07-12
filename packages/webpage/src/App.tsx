@@ -19,7 +19,9 @@ function isTab(e: React.KeyboardEvent<HTMLDivElement> | KeyboardEvent) {
   return (e.key === 'Tab' || e.keyCode === 40 || e.code === 'ArrowDown')
 }
 
-class App extends React.Component<IProps, IState> {
+class App extends React.Component<IProps, IState & {
+  engines: Record<string, string>
+}> {
   private listRef: React.RefObject<any>;
   private searchRef: React.RefObject<any>;
   // @ts-ignore
@@ -29,7 +31,8 @@ class App extends React.Component<IProps, IState> {
     super(props)
     this.state = {
       visible: false,
-      searchList: []
+      searchList: [],
+      engines: {}
     }
     this.listRef = React.createRef()
     this.searchRef = React.createRef()
@@ -42,8 +45,8 @@ class App extends React.Component<IProps, IState> {
   }
 
   hidePopup = () => {
+    console.log('hide')
     this.setState(() => ({
-      visible: false,
       searchList: []
     }))
     this.searchRef.current.clearSearch()
@@ -116,6 +119,9 @@ class App extends React.Component<IProps, IState> {
     this.event.onResult((data: any) => {
       this.setState(() => ({ searchList: data }))
     })
+    this.event.onEngines((data: Record<string, string>) => {
+      this.setState(() => ({ engines: data }))
+    })
   }
 
   onInput = (value: string) => {
@@ -134,9 +140,11 @@ class App extends React.Component<IProps, IState> {
   searchEnter = (e: React.KeyboardEvent, state: IState | undefined) => {
     if(e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13) {
       this.hidePopup()
+      const search = state?.search
+      const engine = state?.engine
       this.event.search({
-        value: state?.search,
-        engine: state?.engine || 'bing'
+        value: search,
+        engine: engine || 'bing'
       })
     }
   }
@@ -167,7 +175,9 @@ class App extends React.Component<IProps, IState> {
           <SearchInput
             ref={this.searchRef}
             onInput={this.onInput}
-            onKeyUp={this.searchEnter}
+            onEnter={this.searchEnter}
+            engines={this.state.engines}
+            defaultEngine={Object.keys(this.state.engines)[0]}
           />
           <div
             className={css.list}

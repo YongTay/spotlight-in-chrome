@@ -78,6 +78,10 @@ class RuntimeEvent {
     this.addCallback(EventType.result, cb)
   }
 
+  onEngines(cb) {
+    this.addCallback(EventType.engines, cb)
+  }
+
   listen() {
     this.port.onMessage.addListener((msg) => {
       if(msg.type === EventType.ping) {

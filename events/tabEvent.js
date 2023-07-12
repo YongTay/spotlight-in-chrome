@@ -61,6 +61,13 @@ class TabEvent {
     })
   }
 
+  sendEngines(data) {
+    this.postMessage({
+      type: EventType.engines,
+      value: data
+    })
+  }
+
   onRegister(cb) {
     this.addCallback(EventType.register, cb)
   }

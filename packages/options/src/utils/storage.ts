@@ -4,7 +4,7 @@ const local = chrome.storage.local
 
 const KEY = 'spotlight'
 export function setSync(data: Record<string, any>){
-  return sync.set({[KEY]: data})
+  return sync.set({[KEY]: { engines: data }})
 }
 
 export function addOrUpdateItems(data: Record<string, any>) {
@@ -31,18 +31,23 @@ export function removeItem(k: string) {
   })
 }
 
-export function getSync(keys?: string | string[]) {
+export function getSync(keys?: string | string[]) : Promise<{[k: string]: any}>{
   if(!keys) {
-    return sync.get(KEY).then(res => res[KEY])
+    return sync.get(KEY)
+      .then(res => res[KEY])
+      .then(res => res && res['engines'])
+      .then(res => res ? res : ({}))
   }
-  return sync.get(KEY).then(res => res[KEY]).then(res => {
-    const ret: Record<string, any> = {}
-    if(!Array.isArray(keys)) {
-      ret[keys] = res[keys]
-    } else {
-      keys.forEach(k => ret[k] = res[k])
-    }
-    return ret
+  return sync.get(KEY).then(res => res[KEY])
+    .then(res => res && res['engines']).then(res => {
+      if(!res) return {}
+      const ret: Record<string, any> = {}
+      if(!Array.isArray(keys)) {
+        ret[keys] = res[keys]
+      } else {
+        keys.forEach(k => ret[k] = res[k])
+      }
+      return ret
   })
 }
 

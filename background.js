@@ -1,5 +1,4 @@
 
-import { backgroundEvent } from './events/event.js'
 import TabEvent from './events/tabEvent.js';
 
 chrome.action.onClicked.addListener(() => {
@@ -10,11 +9,14 @@ function activeEvent() {
   const event = new TabEvent('spotlight')
   event.onRegister(() => {
     event.visible()
+    createEnginesData().then(engines => {
+      event.sendEngines(engines)
+    })
   })
 
   event.onSearch((_, data) => {
     search(data.value).then(res => {
-      event.result(res)
+      res && event.result(res)
     })
   })
 
@@ -38,10 +40,11 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 })
 
-function search(data) {
+async function search(data) {
   const engine = data.engine
   const value = data.value
   if (engine) {
+    const engines = await createEnginesData()
     const url = engines[engine] || engines['bing']
     handleNewTab(url.replace('%s', value))
     return
@@ -93,32 +96,29 @@ async function waitingList(search) {
   }
 }
 
-const engines = {
+const KEY = 'spotlight'
+
+const defaultEngines = {
   bing: 'https://cn.bing.com/search?q=%s',
   baidu: 'https://www.baidu.com/s?ie=utf-8&tn=baidu&wd=%s',
-  google: 'https://www.google.com/search?q=%s',
-  github: 'https://github.com/search?q=%s&type=repositories',
-  bbll: 'https://search.bilibili.com/all?keyword=%s',
-  npm: 'https://www.npmjs.com/search?q=%s'
+  google: 'https://www.google.com/search?q=%s'
 }
 
-function handleSearch(port, value, engine) {
-  if(engine) {
-    const url = engines[engine] || engines['bing']
-    handleNewTab(url.replace('%s', value))
-    return
-  }
-  waitingList(value).then(res => {
-    let result = []
-    const tabs = res.tabs.filter(i => i.title.includes(value) || i.url.includes(value)).map(o => ({...o, type: 'tab'}))
-    const bookmarks = res.bookmarks.filter(i => i.title.includes(value) || i.url.includes(value)).map(o => ({...o, type: 'bookmarks'}))
-    const history = res.history.map(o => ({...o, type: 'history'}))
-    result = [...tabs, ...bookmarks, ...history]
-    port.postMessage({
-      type: 'result',
-      value: result
+function createEnginesData() {
+  return chrome.storage.sync.get(KEY)
+    .then(res => res[KEY])
+    .then(res => res['engines'])
+    .then(res => {
+      const ret = {}
+      if(!res) return defaultEngines
+      let first
+      for(const k in res) {
+        const val = res[k]
+        ret[val.keyword] = val.url
+      }
+
+      return ret
     })
-  })
 }
 
 function closeTab(tab) {

@@ -7,5 +7,6 @@ export default {
   result: 'result',
   closeTab: 'closeTab',
   highlightTab: 'highlightTab',
-  newTab: 'newTab'
+  newTab: 'newTab',
+  engines: 'engines'
 }

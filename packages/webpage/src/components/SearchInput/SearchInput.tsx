@@ -2,15 +2,6 @@ import {ChangeEvent, Component, createRef, KeyboardEvent} from 'react'
 import {ISearchInputProps, IState} from '@/types'
 import css from './SearchInput.module.css'
 
-const engines = {
-  bing: 'https://cn.bing.com/search?q=%s',
-  baidu: 'https://www.baidu.com/s?ie=utf-8&tn=baidu&wd=%s',
-  google: 'https://www.google.com/search?q=%s',
-  github: 'https://github.com/search?q=%s&type=repositories',
-  bbll: 'https://search.bilibili.com/all?keyword=%s',
-  npm: 'https://www.npmjs.com/search?q=%s'
-}
-
 class SearchInput extends Component<ISearchInputProps, IState> {
   private inputRef: React.RefObject<any>;
 
@@ -21,7 +12,7 @@ class SearchInput extends Component<ISearchInputProps, IState> {
       search: '',
       inputData: '',
       prefix: '',
-      engine: ''
+      engine: '',
     }
     this.inputRef = createRef()
   }
@@ -33,7 +24,6 @@ class SearchInput extends Component<ISearchInputProps, IState> {
   onInput = (e: ChangeEvent<HTMLInputElement>) => {
     const value:string = e.target.value.trimStart()
 
-
     // 保存当前的输入，包括@xxx
     this.setState(() => ({ search: value }))
     if(!this.state.visible && /^@.+ /.test(value)) {
@@ -42,7 +32,7 @@ class SearchInput extends Component<ISearchInputProps, IState> {
         const mLen = m[1].length
         const engine = value.trimEnd().substring(1, mLen - 1)
         // @ts-ignore
-        if (engines[engine]) {
+        if (this.props.engines[engine]) {
           this.setState(() => ({ visible: true }))
           e.target.value = ''
           const search = value.trimEnd().substring(mLen)
@@ -74,8 +64,9 @@ class SearchInput extends Component<ISearchInputProps, IState> {
             }
         })
       }
+    } else if(e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13) {
+      this.props.onEnter(e, this.state)
     }
-    this.props.onKeyUp(e, this.state)
   }
 
   focus = () => {
@@ -115,7 +106,7 @@ class SearchInput extends Component<ISearchInputProps, IState> {
           !visible && (<div
             className={css.searchEngine}
           >
-            <span>bing</span>
+            <span>{this.props.defaultEngine}</span>
           </div>)
         }
       </div>

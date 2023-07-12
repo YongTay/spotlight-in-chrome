@@ -14,7 +14,9 @@ export interface IProps {
 
 export interface ISearchInputProps extends IProps {
   onInput: (value: string) => void,
-  onKeyUp: (e: KeyboardEvent, state: IState) => void
+  onEnter: (e: KeyboardEvent, state: IState) => void
+  engines: Record<string, string>,
+  defaultEngine: string
 }
 
 export interface IItemProps extends IProps {
