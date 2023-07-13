@@ -43,7 +43,6 @@ const Bookmarks: React.FC<{}> = () => {
     <div className={css.buttonWrapper}>
       <Space>
         <Button>同步</Button>
-        <Button type="primary">新增</Button>
       </Space>
     </div>
     <div className={css.treeWrapper}>
