@@ -1,6 +1,17 @@
 
-const sync = chrome.storage.sync
-const local = chrome.storage.local
+const DEV = import.meta.env.MODE === 'development'
+
+class Storage {
+  set(v: any) {
+    return Promise.resolve(v)
+  }
+  get() {
+    return Promise.resolve({})
+  }
+}
+
+const sync =  DEV ? new Storage() : chrome.storage.sync
+const local = DEV ? new Storage() : chrome.storage.local
 
 const KEY = 'spotlight'
 export function setSync(data: Record<string, any>){
