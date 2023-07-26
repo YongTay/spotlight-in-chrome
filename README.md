@@ -7,3 +7,7 @@ chrome内核浏览器快速搜索
 
 支持快速搜索 呼出之后使用@标识需要使用的引擎或其它搜索网站地址
 自定义配置搜索引擎或搜索网站，配置后使用@进行快速搜索
+
+### Install / How to use
+
+> Download the latest release and add into your chrome browser
